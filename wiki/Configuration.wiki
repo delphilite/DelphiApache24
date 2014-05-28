@@ -1,1 +1,25 @@
-Banana banana banana
+Locate the Apache httpd.conf file. This is the webserver's main configuration file and it is likely to be in a directory named "conf"
+
+Include the following line in the config file ...
+{{{
+LoadModule helloworld modules/mod_HelloWorld.so
+}}}
+
+Where in the above ...
+  * helloworld is the module name. It is equal to the value of the ModuleName constant you will find in mod_HelloWorld.dpr .
+  * modules is the name of the directory that you put your so file. If you put it somewhere different, change accordingly.
+  * mod_HelloWorld.so is the name of the output binary produced by compiling mod_HelloWorld.dpr . If you project has a different name, change accordingly.
+
+Now also in the configuration file, after LoadModule, add the following configs ...
+
+{{{
+<IfModule helloworld>
+  <Location "/hello">
+    SetHandler mod_helloworld-handler
+  </Location>
+</IfModule>
+
+<IfModule helloworld>
+  pascali-setconfigroot banana
+</IfModule>
+}}}
