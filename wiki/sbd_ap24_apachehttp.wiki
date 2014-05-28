@@ -6,12 +6,12 @@ For reasons of copyright, I cannot post the SBD.AP24_ApacheHTTP unit to the code
   # Replace the unit reference to HTTPD to SBD.AP24.httpd
   # Add a unit reference to Generics.Collections
   # Add declaration
-{{{
+<code language="pascal">
 const
   ServerName_Idx = 600;
   ServerVers_Idx = 601;
   Handler_Idx    = 602;
-}}}
+</code>
   # Rename TApacheRequest to TApacheTwoRequest and TApacheResponse to TApacheTwoResponse
   # Add these private data members to class TApacheTwoRequest
 {{{
