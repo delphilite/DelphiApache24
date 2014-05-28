@@ -12,8 +12,26 @@ const
   ServerVers_Idx = 601;
   Handler_Idx    = 602;
 }}}
+  # Rename TApacheRequest to TApacheTwoRequest and TApacheResponse to TApacheTwoResponse
   # Add these private data members to class TApacheTwoRequest
 {{{
     FRawHeaders: TStrings;
     FDummy: TStrings;
+}}}
+  # Add these two public methods to the class
+{{{
+  public
+    destructor Destroy; override;
+    function GetRawHeadersIn: TStrings;
+  end;
+}}}
+  # In the response class, modernise the data members like so, and add a destructor.
+{{{
+  TApacheTwoResponse = class(TWebResponse)
+  private
+    FStringVariables: TStrings;
+    FIntegerVariables: TList<Integer>;
+    FDateVariables: TList<TDateTime>;
+  public
+    destructor Destroy; override;
 }}}
