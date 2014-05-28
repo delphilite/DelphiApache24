@@ -6,12 +6,14 @@ For reasons of copyright, I cannot post the SBD.AP24_ApacheHTTP unit to the code
 # Replace the unit reference to HTTPD to SBD.AP24.httpd
 # Add a unit reference to Generics.Collections
 # Add declaration
-
+{{{
 const
   ServerName_Idx = 600;
   ServerVers_Idx = 601;
   Handler_Idx    = 602;
-
-#Add these private data members to class TApacheTwoRequest
+}}}
+# Add these private data members to class TApacheTwoRequest
+{{{
     FRawHeaders: TStrings;
     FDummy: TStrings;
+}}}
