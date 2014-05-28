@@ -187,3 +187,4 @@ begin
     Result := ap_rputs(PAnsiChar(Astring), FRequest_rec) = length(Astring)
 end;
 }}}
+  # Something is not right with !TApacheTwoRequest.WriteHeaders(). Let me get back to you on what needs to change here.
