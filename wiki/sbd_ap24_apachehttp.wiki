@@ -103,7 +103,7 @@ end;
 
 }}}
   # Replace of the start of GetStringVariable(), before the big case statement with ...
-{{
+{{{
 function TApacheTwoRequest.GetStringVariable( Index: Integer): AnsiString;
 const
   MaxChunkSize = 10240;
