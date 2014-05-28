@@ -23,3 +23,12 @@ Now also in the configuration file, after LoadModule, add the following configs 
   pascali-setconfigroot banana
 </IfModule>
 }}}
+
+The above is just an example. Of course you can configure it any way you want.
+
+  * In the above, the < Location> node, says that when the path part of your URL starts with /hello, then this module will be tasked with handling the web request. The SetHandler command matches the value of the HandlerName constant in the  mod_HelloWorld.dpr . If you are using a different primary handler name, of course, change accordingly.
+  * You can define multiple handlers in the dpr. In-source code comments show you how to do it. Of course, define what-ever Apache configuration you need for each of your handlers.
+  * The < pascali-setconfigroo> node is an example of how to pass configuration information from the config file to Delphi. These are called Apache directives. The example pascali-setconfigroot directive show here is dealt with in unit uHelloWorldApacheApp.
+  ** Define whatever directives your application needs, in the style of uHelloWorldApacheApp.
+  ** Register your directives in the dpr file, as shown by the in-source comments.
+  ** Configure your directives with data, as required in the Apache config file.
