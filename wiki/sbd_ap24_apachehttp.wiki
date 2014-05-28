@@ -35,3 +35,155 @@ const
   public
     destructor Destroy; override;
 }}}
+  # Replace the old FieldByName() method with...
+{{{
+function TApacheTwoRequest.GetFieldByName( const Name: AnsiString): AnsiString;
+begin
+result := apr_table_get( FRequest_rec^.headers_in^, pansichar(AnsiString(Name)));
+if SameText( UTF8ToString( Name), 'SERVER_SOFTWARE') and (result = '') then
+    result := GetStringVariable( ServerVers_Idx)
+  else if SameText( UTF8ToString( Name), 'HANDLER') and (result = '') then
+    result := GetStringVariable( Handler_Idx)
+end;
+
+function CompFunc( P: Pointer; PC: PAnsiChar; PC2: PAnsiChar): Integer; cdecl;
+var
+  as1, as2  : utf8string;
+  Key, Value: string;
+begin
+if assigned( P) and (TObject( P) is TApacheTwoRequest) then
+    begin
+    if assigned( PC) then
+        as1 := PC
+      else
+        as1 := '';
+    Key := UTF8ToString( as1);
+    if assigned( PC2) then
+        as2 := PC2
+      else
+        as2 := '';
+    Value := UTF8ToString( as2);
+    if (Key = '') or (Value = '') or (as2[1] = #0) then
+        result := 0
+      else
+        begin
+        result := 1;
+        TApacheTwoRequest(P).FRawHeaders.Add( Key + '=' + Value)
+        end
+    end
+  else
+    result := 0;
+end;
+
+function TApacheTwoRequest.GetRawHeadersIn: TStrings;
+var
+  valist: TBytes;
+begin
+if not assigned( FRawHeaders) then
+  begin
+  FRawHeaders := TStringList.Create;
+  SetLength( vaList, 50);
+  FillChar( vaList[0], Length(vaList), #0);
+  try
+    apr_table_vdo( @CompFunc, self, FRequest_rec^.headers_in^, @valist[0])
+  except on E: Exception do
+      begin
+      if not assigned( FDummy) then
+        FDummy := TStringList.Create;
+      result := FDummy;
+      FDummy.Clear;
+      result.Add( E.ClassName + ': ' + E.Message);
+      exit
+      end
+    end
+  end;
+result := FRawHeaders
+end;
+
+
+}}}
+  # Replace of the start of GetStringVariable(), before the big case statement with ...
+{{
+function TApacheTwoRequest.GetStringVariable( Index: Integer): AnsiString;
+const
+  MaxChunkSize = 10240;
+
+  function GetURI: string;
+  var
+    P1: integer;
+  begin
+  result := FRequest_rec^.the_request;
+   // value like 'GET /hello/sdf?dfs=er HTTP/1.1'
+   P1 := Pos( ' ', result);
+   if P1 > 0 then
+     Delete( result, 1, P1);
+   P1 := Pos( ' ', result);
+   if P1 > 0 then
+     Delete( result, P1, MaxInt)
+  end;
+
+var
+  len, BytesRead, Size: Integer;
+  p, buf: pansichar;
+  value: AnsiString;
+  P2: integer;
+begin
+  case Index of
+}}}
+  # Selectors 0 to 3 remain unchanged. I think Embarcadero is in error with selctor 4. My code for 4 is ...
+{{{
+    4: begin  // PathInfo
+       value := FRequest_rec^.path_info;
+       if value = '' then
+         begin
+         value := GetURI;
+         P2 := Pos( '?', value);
+         if P2 > 0 then
+           Delete( value, P2, MaxInt)
+         end
+       end;
+}}}
+  # Selectors 8 to 22 are ...
+{{{
+    8: value := apr_table_get (FRequest_rec^.headers_in^, 'Accept'); // Accept
+    9: value := apr_table_get( FRequest_rec^.headers_in^, 'From');   // From
+    10: value := FRequest_rec^.hostname;                             // Host
+    12: value := apr_table_get(FRequest_rec^.headers_in^, 'Referer'); // Referer
+    13: value := apr_table_get(FRequest_rec^.headers_in^, 'User-Agent'); // UserAgent
+    14: value := FRequest_rec^.content_encoding;     // ContentEncoding
+    15: value := apr_table_get(FRequest_rec^.headers_in^, 'Content-Type');  // ContentType
+    16: value := apr_table_get(FRequest_rec^.headers_in^, 'Content-Length');
+    17: value := ''; // ContentVersion
+    18: value := ''; // DerivedFrom
+    19: value := '';      // Expires
+    20: value := apr_table_get(FRequest_rec^.headers_in^, 'Title');  // Title
+    21: value := FRequest_rec^.connection^.client_ip; // RemoteAddr
+    22: value := FRequest_rec^.connection^.remote_host; // RemoteHost
+}}}
+  # 23, 24 and 25 are unchanged. 26 onwards are ..
+{{{
+    26: value := apr_table_get(FRequest_rec^.headers_in^, 'Connection'); // Connection
+    27: value := apr_table_get(FRequest_rec^.headers_in^, 'Cookie');   // Cookie
+    28: value := ''; // Authorization
+    ServerName_Idx: Value := ap_get_server_name( FRequest_rec^);
+    ServerVers_Idx: Value := ap_get_server_banner;
+    Handler_Idx   : Value := FRequest_rec^.handler;
+}}}
+  # Add this bit
+{{{
+destructor TApacheTwoRequest.Destroy;
+begin
+FRawHeaders.Free;
+FDummy.Free;
+inherited
+end;
+}}}
+  # Replace WriteString() with ...
+{{{
+function TApacheRequest.WriteString(const AString: AnsiString): Boolean;
+begin
+  Result := true;
+  if Astring <> '' then
+    Result := ap_rputs(PAnsiChar(Astring), FRequest_rec) = length(Astring)
+end;
+}}}
