@@ -3,6 +3,6 @@
 = Table on contents =
 
   * [Features]
-  * [Expected result]
+  * [expected-result Expected June]
   * [Configuration]
-  * How to create the [SBD.AP24.ApacheHTTP] uni
+  * How to create the [SBD.AP24.ApacheHTTP] unit.
