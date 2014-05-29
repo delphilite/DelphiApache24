@@ -2,7 +2,7 @@
 
 For reasons of copyright, I cannot post the SBD.AP24_ApacheHTTP unit to the code repository. Instead, here are instructions for creating the unit.
 
-  # Copy D2010's unit ApacheTwoHTTP and name it SBD.AP24.ApacheHTTP
+  # Copy D2010's unit ApacheTwoHTTP and name it SBD.AP24.ApacheHTTP. (In XE6 ApacheTwoHTTP was renamed Web.ApacheHTTP)
   # Replace the unit reference to HTTPD to SBD.AP24.httpd
   # Add a unit reference to Generics.Collections
   # Add declaration
